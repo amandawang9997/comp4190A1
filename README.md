@@ -1,2 +1,2 @@
 # comp4190A1
-test
+if your using windows, when entering input from stdin, make sure to press ctrl+d in the end
