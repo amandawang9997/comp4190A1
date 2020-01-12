@@ -5,7 +5,8 @@ col=0  #the number of cols
 puzzle=[] #a 2d-array
 data={'row':0,'col':0,'puzzle':puzzle} #this is the dictionary, row&col are integer and puzzle is a 2-d array
 
-#use the format provided in the assignment(i.e. the first 2 lines must specify the start and the dimension)
+#use the format provided in the assignment(i.e. the first 2 lines must specify the start and the dimension
+#the last line must specify the end )
 def read():         #this method reads from stdin and returns a dictionary containing a 2d-array
     print("plz enter your puzzle")
     linesArr = sys.stdin.read().splitlines()
@@ -19,5 +20,14 @@ def read():         #this method reads from stdin and returns a dictionary conta
             else:puzzle1[i][j]=linesArr[i][j]
     data['row'], data['col'], data['puzzle']=row,col,puzzle1    #assign new values to the dictionary
     return data
+
+#print out an 2d array(the snapshot of the puzzle)
+def printPuzzle(arr):
+    print('******************************************')
+    for i in range(len(arr)):
+        for j in range(len(arr[0])):
+            print(arr[i][j], end="")
+        print()
+    print('******************************************')
 
 
