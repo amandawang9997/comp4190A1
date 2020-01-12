@@ -1,3 +1,4 @@
+
 import rule
 from read import printPuzzle,read
 
