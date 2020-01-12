@@ -7,14 +7,4 @@ edit: backtracking.py is done, however I am not able to make an infinite loop, I
 
 
 
-#Start
-8 8
-_1_0_1_1
-___2____
-____101_
-2_2_1___
-__010___
-20_0____
-_3____10
-____01__
-# End 
+
