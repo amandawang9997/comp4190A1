@@ -1,7 +1,7 @@
 #Note:state is always a 2d list
 
 
-#this method find all unassigned cells and return a list containing coordinates(e.g (3,4))
+#this method find all unassigned cells in the initial state and return a list containing coordinates(e.g (3,4))
 def getUnassigned(state):
     result=[]
     for i in range(len(state)):
@@ -38,7 +38,7 @@ def numberConstrain(state):
         if i-1>=0 and  state[i-1][j]=='b':count+=1
         if j+1<=col-1 and state[i][j+1]=='b':count+=1
         if j-1>=0 and state[i][j-1]=='b':count+=1
-        if count>len(getNumbers(state)):
+        if count>state[i][j]:
             return False
     return True
 
