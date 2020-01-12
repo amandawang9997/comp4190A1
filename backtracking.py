@@ -1,30 +1,19 @@
 import rule
 from read import printPuzzle,read
 
-VERBOSE = True
+
 
 #the main loop so that it will always ask an input then solve the puzzle
-
 def mainLoop():
-    while True:
-        state=read()['puzzle']
-        assignment=backtracking(state)
-        print(assignment)
-        temp=assignAll(assignment,state) #the final solution as a 2d list
-        print('the answer is:')
-        printPuzzle(temp)
-        
-#def solveFile(filename):
-#    for puzzle in readFile(filename):
-#        solvePuzzle(puzzle)
-        
-#def solvePuzzle(puzzle):
-#    state=puzzle['puzzle']
-#    assignment=backtracking(state)
-#    temp=assignAll(assignment,state) #the final solution as a 2d list
-#    print('the answer is:')
-#    printPuzzle(temp)
     
+        while True:
+            state=None
+
+            state=read()['puzzle']
+            assignment=backtracking(state)
+            temp=assignAll(assignment,state) #the final solution as a 2d list
+            print('the answer is:')
+            printPuzzle(temp)
 
 
 def backtracking(state): #state is the initial state immediately after reading from stdin
@@ -39,9 +28,7 @@ def backtracking(state): #state is the initial state immediately after reading f
 #it returns a new assignment to solve the puzzle with initial state "state"
 def backtrackingHelper(A,U,state):
     current = assignAll(A, state)
-    # Only prints the temporary states if VERBOSE is true
-    if VERBOSE:
-        printPuzzle(current)
+    printPuzzle(current)
     if rule.solutionCheck(current):#all unassigned cell have been assigned
         return A                                                                             #and the number constraint is satisfied
     elif len(U)>0:
