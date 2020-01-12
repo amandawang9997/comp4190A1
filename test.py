@@ -1,4 +1,7 @@
 #run this file to test
 from read import read
-print(read()['puzzle'])
-# print((1,2) in [(2,3),(1,2)])
+import rule as rl,backtracking as bt
+state=read()['puzzle']
+arr=rl.goodCells(state)
+print(arr)
+print(rl.solutionCheck(state))
