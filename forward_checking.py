@@ -11,11 +11,6 @@ def forwardChecking(state):
     forwardCheckingHelper(A, U, D)
 
 
-sefa
-
-#
-
-
 def forwardCheckingHelper(A, U, D):
     current = assignAll(A, state)
     printPuzzle(current)
