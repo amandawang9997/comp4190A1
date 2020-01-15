@@ -93,7 +93,7 @@ def goodCells(state):
         for j in range (col):
             if (i,j) not in lit and (i,j) not in numbers:
                 result.append((i,j))
-    return set(result)
+    return result
 
 #this method checks whether a solution is valid(i.e. every cell is lit and the number condition is satisfied)
 #only use this method when every empty cell has been  assigned a value(either '_' or 'b')
