@@ -79,7 +79,9 @@ def parse_puzzle(puzzle):
     for i in range(H):
         for j in range(W):
             if (i,j) not in A:
-                U[(i,j)] = ['b','_']
+                U[(i,j)] = ['_']
+                if wall_constraint_check(wc,(i,j),'b'):
+                    U[(i,j)].insert(0,'b')
             j = j + 1
         i = i + 1
     
@@ -151,28 +153,18 @@ def unparse_puzzle(state):
 # lc is the dictionary of current light constraints
 # key is the cooridinates of the var you are trying to change
 # lit is true if you are adding a bulb and false if not
-def light_constraint_check(state,key,value):
+def light_constraint_check(lc,key,value):
     # Violates constraint if there are only '_'s in key's connected nodes
     if(value == '_'):
         ret = False
-        for x in state['LC'][key]['Connected']:
-            x_lit = state['LC'][x]['Value'] == 'b'
-            x_could_be_lit = False
-            if state['LC'][x]['Value'] == None:
-                if 'b' in state['U'][x]:
-                    x_could_be_lit = True
-            if x_lit or x_could_be_lit:
+        for x in lc[key]['Connected']:
+            if lc[x]['Value'] == 'b' or lc[x]['Value'] == None:
                 return True
         return ret
     # Violates constraint if the 'b' I am placing already has a 'b' in it connected nodes
     if(value == 'b'):
-        for x in state['LC'][key]['Connected']:
-            x_lit = state['LC'][x]['Value'] == 'b'
-            x_could_be_dark = False
-            if state['LC'][x]['Value'] == None:
-                if '_' in state['U'][x]:
-                    x_could_be_dark = True
-            if x_lit or not x_could_be_dark:
+        for x in lc[key]['Connected']:
+            if lc[x]['Value'] == 'b':
                 return False
     return True
 
@@ -180,56 +172,50 @@ def light_constraint_check(state,key,value):
 # lc is the dictionary of current light constraints
 # key is the cooridinates of the var you are trying to change
 # lit is true if you are adding a bulb and false if not
-def light_constraint_update(state,key,value):
-    state['LC'][key]['Value'] = value
+def light_constraint_update(lc,key,value):
+    lc[key]['Value'] = value
 
 #Checks if the suggested change is valid under the wall constraints
-def wall_constraint_check(state,key,value):
+def wall_constraint_check(wc,key,value):
     # Violates constraint if the number of unassigned neighbors equals the number of lights still needed
     if(value == '_'):
-        for wall in state['WC']:
-            if key in state['WC'][wall]['Neighbors']:
+        for wall in wc:
+            if key in wc[wall]['Neighbors']:
                 num_lights = 0
-                num_could_be_lit = 0
-                for x in state['WC'][wall]['Neighbors']:
-                    if state['WC'][wall]['Neighbors'][x] == 'b':
+                num_none = 0
+                for x in wc[wall]['Neighbors']:
+                    if wc[wall]['Neighbors'][x] == 'b':
                         num_lights = num_lights + 1
-                    if state['WC'][wall]['Neighbors'][x] == None:
-                        if state['LC'][x]['Value'] == None:
-                            if 'b' in state['U'][x]:
-                                num_could_be_lit = num_could_be_lit + 1
+                    if wc[wall]['Neighbors'][x] == None:
+                        num_none = num_none + 1
                 # maybe a bug when num_none == 0
-                if (state['WC'][wall]['Num'] - num_lights) == num_could_be_lit:
+                if (wc[wall]['Num'] - num_lights) == num_none:
                     return False
     if(value == 'b'):            
-        for wall in state['WC']:
-            if key in state['WC'][wall]['Neighbors']:
+        for wall in wc:
+            if key in wc[wall]['Neighbors']:
                 num_lit = 1
-                num_cant_be_dark = 0
-                for x in state['WC'][wall]['Neighbors']:
-                    if state['WC'][wall]['Neighbors'][x] == 'b':
+                for x in wc[wall]['Neighbors']:
+                    if wc[wall]['Neighbors'][x] == 'b':
                         num_lit = num_lit + 1
-                    if state['LC'][x]['Value'] == None and x != key:
-                        if '_' not in state['U'][x]:
-                            num_cant_be_dark = num_cant_be_dark + 1
-                if num_lit + num_cant_be_dark > state['WC'][wall]['Num']:
+                if num_lit > wc[wall]['Num']:
                     return False
     return True
 
 
 
 #Updates wall constraint to new value
-def wall_constraint_update(state,key,value):
-    for wall in state['WC']:
-        if key in state['WC'][wall]['Neighbors']:
-            state['WC'][wall]['Neighbors'][key] = value
+def wall_constraint_update(wc,key,value):
+    for wall in wc:
+        if key in wc[wall]['Neighbors']:
+            wc[wall]['Neighbors'][key] = value
 
 
 def check_max_depth(state):
     return len(state['A']) == state['W']*state['H']
 
 def check_constraints(state,key,value):
-    return light_constraint_check(state,key,value) and wall_constraint_check(state,key,value)
+    return light_constraint_check(state['LC'],key,value) and wall_constraint_check(state['WC'],key,value)
 
 def u_update(state,key,value):
     #update nodes adjacent to key in the constraint graph
@@ -265,7 +251,19 @@ def effect_node(state,key):
             updated = False
             for val in state['U'][u]:
                 if key in state['U']:
-                    if not check_constraints(state,u,val):
+                    valid = False
+                    for possible in state['U'][key]:
+                        
+                        state_copy = copy.deepcopy(state)
+
+                        state_copy['U'].pop(key)
+                        state_copy['A'][key] = possible
+                        light_constraint_update(state_copy['LC'],key,possible)
+                        wall_constraint_update(state_copy['WC'],key,possible)
+                        if check_constraints(state_copy,u,val):
+                            valid = True
+                        del state_copy
+                    if not valid:
                         state['U'][u].remove(val)
                         updated = True
                         if len(state['U'][u]) == 0:
@@ -276,33 +274,33 @@ def effect_node(state,key):
                         updated = True
                         if len(state['U'][u]) == 0:
                             state['None_empty'] = False
-            print('key' + str(key))
-            print('u' + str(u))
-            print('val' + str(state['U'][u]))
+            #print('key' + str(key))
+            #print('u' + str(u))
+            #print('val' + str(state['U'][u]))
             if updated:
                 effect_node(state,u)
                 
                         
 def update_state_forward_checking(state,key,value):
     state['A'][key] = value
-    light_constraint_update(state,key,value)
-    wall_constraint_update(state,key,value)
+    light_constraint_update(state['LC'],key,value)
+    wall_constraint_update(state['WC'],key,value)
     u_update(state,key,value)
     
     state['Max_depth'] = check_max_depth(state)
     
 def update_state_backtracking(state,key,value):
     state['A'][key] = value
-    light_constraint_update(state,key,value)
-    wall_constraint_update(state,key,value)
+    light_constraint_update(state['LC'],key,value)
+    wall_constraint_update(state['WC'],key,value)
     
     state['Max_depth'] = check_max_depth(state)
 
 def update_state_arc_consistent(state,key,value):
 
     state['A'][key] = value
-    light_constraint_update(state,key,value)
-    wall_constraint_update(state,key,value)
+    light_constraint_update(state['LC'],key,value)
+    wall_constraint_update(state['WC'],key,value)
     effect_node(state,key)
     
     state['Max_depth'] = check_max_depth(state)
