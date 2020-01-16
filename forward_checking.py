@@ -49,9 +49,10 @@ def forwardCheckingHelper(A, U, D, state):
 
 def getArcsNum(state):
     row, col = len(state), len(state[0])
-    result = []
-    unAssigned = rule.getUnassigned()
+    unAssigned = rule.getUnassigned(state)
+    temp = []
     for (i, j) in rule.getNumbers(state):
+        result = []
         if i + 1 <= row - 1 and (i + 1, j) in unAssigned:
             result.append((i + 1, j))
         if i - 1 >= 0 and (i - 1, j) in unAssigned:
@@ -60,7 +61,7 @@ def getArcsNum(state):
             result.append((i, j + 1))
         if j - 1 >= 0 and (i, j - 1) in unAssigned:
             result.append((i, j - 1))
-    temp = [(x, y) for x in result for y in result if x is not y]
+        temp.extend([(x, y) for x in result for y in result if x != y])
     return set(temp)
 
 # this method receives a 2d list and returns {(c_i,c_j)} where c_i affects c_j because they are on the same row or col
@@ -68,11 +69,18 @@ def getArcsNum(state):
 
 def getArcsRowCol(state):
     result = []
-    for (i, j) in rule.getUnassigned():
+    for (i, j) in rule.getUnassigned(state):
+        state1 = []
         state1 = state.copy()
         # in order the use the findLit method, we have to assign b to (i,j) in the initial state
         state1[i][j] = 'b'
-        result.append([((i, j), (m, n)) for (m, n) in rule.findLit(state1)])
+        print(rule.findLit(state1))
+        result.extend([((i, j), (m, n))
+                       for (m, n) in rule.findLit(state1) if (i, j) != (m, n)])
+        result = [((i, j), (m, n))
+                  for ((i, j), (m, n)) in result if (m, n) not in rule.getNumbers(state)]
+        result = [((i, j), (m, n))
+                  for ((i, j), (m, n)) in result if (i, j) not in rule.getNumbers(state)]
     return set(result)
 
 #   this method receives a state and calculate a possible assignment by elimating impossible values in the domain for each variable
