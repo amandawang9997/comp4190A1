@@ -1,3 +1,4 @@
+
 from judah_state_forward import parse_puzzle,unparse_puzzle, update_state_arc_consistent, check_constraints
 from read import read,printPuzzle
 import copy
