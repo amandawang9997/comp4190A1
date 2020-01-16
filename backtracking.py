@@ -1,3 +1,4 @@
+
 import rule
 from read import printPuzzle,read
 
@@ -5,11 +6,15 @@ from read import printPuzzle,read
 
 #the main loop so that it will always ask an input then solve the puzzle
 def mainLoop():
-        state=read()['puzzle']
-        assignment=backtracking(state)
-        temp=assignAll(assignment,state) #the final solution as a 2d list
-        print('the answer is:')
-        printPuzzle(temp)
+    
+        while True:
+            state=None
+
+            state=read()['puzzle']
+            assignment=backtracking(state)
+            temp=assignAll(assignment,state) #the final solution as a 2d list
+            print('the answer is:')
+            printPuzzle(temp)
 
 
 def backtracking(state): #state is the initial state immediately after reading from stdin

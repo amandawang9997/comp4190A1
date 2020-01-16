@@ -1,7 +1,7 @@
 #run this file to test
-from read import read
+from read import read,printPuzzle
 import rule as rl,backtracking as bt
-state=read()['puzzle']
-arr=rl.goodCells(state)
-print(arr)
-print(rl.solutionCheck(state))
+
+
+#the following code solves puzzle one at a time
+bt.mainLoop()
