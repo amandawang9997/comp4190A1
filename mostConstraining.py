@@ -1,10 +1,12 @@
 import rule
 from read import printPuzzle, read
 from backtracking import assignAll
-
+import copy
 
 # the main loop so that it will always ask an input then solve the puzzle
-def mainLoop():
+
+
+def mainLoopmC():
 
     while True:
         state = None
@@ -24,34 +26,35 @@ def mostConstrainingCell(state, currentU):
     numberedCells = set(rule.getNumbers(state))  # get all the numbered cells
     affectedDict = getAffected(state)
     for (i, j) in currentU:     # for each (i,j) which has not been assigned a value
-        currentState = assignAll({(i, j): 'b'}, state)
+        currentState = assign(state, (i, j), 'b')
         # since numLit must exclude the bulb itself
         # calculate how many cells have been lit if (i,j) has a bulb
-        numLit = len(rule.findLit(currentState)) - len(rule.findLit(state))
+        # numLit = len(rule.findLit(currentState)) - len(rule.findLit(state))
         # calculate the number of cells which are affected because of the number constraint
+        numLit = 0
         affectedList = []
         for (m, n), arr in affectedDict.items():
             if (i, j) in arr:  # if  (i,j) is adjacent to some numbered Cell (m, n)then add all the cells that are adjacent to (m,n) into the list
                 affectedList.extend(arr)
         affectedList = set(affectedList)
         temp[(i, j)] = len(affectedList) - 1 + numLit
+
     return max(temp, key=temp.get)
 
 
 # given a current state, find a dictionary such that {(i, j):[(x1,y1),(x2,y2),...],......} where (i, j) is numbered and (xi, yi)'s' are adjacent to it and unassigned
 def getAffected(state):
-    result = {}
-    unassigned = rule.getUnassigned()
+    result = {(i, j): [] for (i, j) in rule.getNumbers(state)}
+    unassigned = rule.getUnassigned(state)
     row, col = len(state), len(state[0])
     for (i, j) in rule.getNumbers(state):
-        result[(i, j)] = []
-        if i + 1 <= row - 1 and state[i + 1][j] in unassigned:
+        if i + 1 <= row - 1 and (i + 1, j) in unassigned:
             result[(i, j)].append((i + 1, j))
-        if i - 1 >= 0 and state[i - 1][j] in unassigned:
+        if i - 1 >= 0 and (i - 1, j) in unassigned:
             result[(i, j)].append((i - 1, j))
-        if j + 1 <= col - 1 and state[i][j + 1] in unassigned:
+        if j + 1 <= col - 1 and (i, j + 1) in unassigned:
             result[(i, j)].append((i, j + 1))
-        if j - 1 >= 0 and state[i][j - 1] in unassigned:
+        if j - 1 >= 0 and (i, j - 1) in unassigned:
             result[(i, j)].append((i, j - 1))
     return result
 
@@ -63,10 +66,23 @@ def mostConstrainingSearch(state):
     return mostConstrainingSearchHelper(A, U.copy(), state)
 
 
+def assign(state, coord, opt):
+    state1 = copy.deepcopy(state)
+    state1[coord[0]][coord[1]] = opt
+    return state1
+
+
+def assignDict(dict, state):
+    result = copy.deepcopy(state)
+    for (i, j), option in dict.items():
+        result[i][j] = option
+    return result
+
+
 # this method receives assignments(A,dictionary), a list of unassigned coordinates(U), an initial state
 # it returns a new assignment to solve the puzzle with initial state "state"
 def mostConstrainingSearchHelper(A, U, state):
-    current = assignAll(A, state)  # the current state
+    current = assignDict(A, state)  # the current state
     printPuzzle(current)
     if rule.solutionCheck(current):  # all unassigned cell have been assigned
         return A  # and the number constraint is satisfied
@@ -80,7 +96,7 @@ def mostConstrainingSearchHelper(A, U, state):
             B[(i, j)] = option
             if ((i, j) not in rule.goodCells(current)) and option == 'b':
                 continue
-            temp = assignAll(B, state)
+            temp = assignDict(B, state)
             if not rule.numberConstrain(temp):
                 continue
             # recursive call with new assignments B
