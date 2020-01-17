@@ -2,6 +2,7 @@ import rule
 from read import printPuzzle, read
 from backtracking import assignAll
 import copy
+import random
 
 # the main loop so that it will always ask an input then solve the puzzle
 
@@ -26,11 +27,12 @@ def mostConstrainingCell(state, currentU):
     numberedCells = set(rule.getNumbers(state))  # get all the numbered cells
     affectedDict = getAffected(state)
     for (i, j) in currentU:     # for each (i,j) which has not been assigned a value
-        currentState = assign(state, (i, j), 'b')
+        # currentState = assign(state, (i, j), 'b')
         # since numLit must exclude the bulb itself
         # calculate how many cells have been lit if (i,j) has a bulb
-        # numLit = len(rule.findLit(currentState)) - len(rule.findLit(state))
+
         # calculate the number of cells which are affected because of the number constraint
+        # numLit = numlitCells(state, (i, j))
         numLit = 0
         affectedList = []
         for (m, n), arr in affectedDict.items():
@@ -39,7 +41,11 @@ def mostConstrainingCell(state, currentU):
         affectedList = set(affectedList)
         temp[(i, j)] = len(affectedList) - 1 + numLit
 
-    return max(temp, key=temp.get)
+        # randomly choose a kay in case of tie
+        mv = max(temp.values())
+        result = random.choice([k for (k, v) in temp.items() if v == mv])
+    return result
+    # return max(temp, key=temp.get)
 
 
 # given a current state, find a dictionary such that {(i, j):[(x1,y1),(x2,y2),...],......} where (i, j) is numbered and (xi, yi)'s' are adjacent to it and unassigned
@@ -57,6 +63,29 @@ def getAffected(state):
         if j - 1 >= 0 and (i, j - 1) in unassigned:
             result[(i, j)].append((i, j - 1))
     return result
+
+
+def numlitCells(state, coord):
+    result = []
+    (i, j) = coord
+    k = 0
+    while j + k < len(state[1]) and (not isinstance(state[i][j + k], int)):
+        result.append((i, j + k))
+        k += 1
+
+    k = 0
+    while j - k >= 0 and (not isinstance(state[i][j - k], int)):
+        result.append((i, j - k))
+        k += 1
+    k = 0
+    while i + k < len(state) and (not isinstance(state[i + k][j], int)):
+        result.append((i + k, j))
+        k += 1
+    k = 0
+    while i - k >= 0 and (not isinstance(state[i - k][j], int)):
+        result.append((i - k, j))
+        k += 1
+    return len(result)
 
 
 # state is the initial state immediately after reading from stdin
