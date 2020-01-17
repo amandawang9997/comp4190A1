@@ -24,7 +24,7 @@ def arc_consistent_helper(state):
         return state,num_nodes
     for x in range(2):
         state_copy = copy.deepcopy(state)
-        curr,value = get_next_u(state_copy)
+        curr,value = get_next_u_h1(state_copy)
         if(x < len(value)):
             update_state_arc_consistent(state_copy,curr,value[x])
             
