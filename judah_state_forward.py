@@ -1,5 +1,5 @@
 import copy
-
+from howmanyconstrains import getConstrains
 
 # takes a state and a key that you wish to assign a 'value' to
 # and updates the state in an arc consistent way
@@ -9,13 +9,26 @@ def update_state_arc_consistent(state,key,value):
     light_constraint_update(state,key,value)
     wall_constraint_update(state,key,value)
     effect_node(state,key)
+    state['Adj'].pop(key)
     
     state['Solved'] = check_max_depth(state)
+    if state['Num 2'] == 0 and state['Valid']:
+        assign_all(state)
+        state['Solved'] = True
+
+def assign_all(state):
+    for x in state['U']:
+        state['A'][x] = state['U'][x][0]
+
+    state['U'] = {}
 
 # returns a tuple key representing the next node to assign
 # and a 1d list of all the values it can take. (No heuristic)
 def get_next_u(state):
-    return(state['U'].popitem())
+    key,item = state['U'].popitem()
+    if len(item) == 2:
+        state['Num 2'] = state['Num 2'] - 1
+    return key,item
 
 # returns a tuple key representing the next node to assign
 # and a 1d list of all the values it can take.
@@ -26,8 +39,58 @@ def get_next_u_h1(state):
         if len(state['U'][x]) == 1:
             return x,state['U'].pop(x)
 
+    state['Num 2'] = state['Num 2'] - 1
     # else just get one from the top
     return state['U'].popitem()
+
+# returns a tuple key representing the next node to assign
+# and a 1d list of all the values it can take.
+# this will return the node with the most nodes
+# adjacent to it in the consrraint graph( heuristic 2)
+def get_next_u_h2(state):
+    max_key = keywithmaxval(state['Adj'])
+    max_item = state['U'].pop(max_key)
+    if len(max_item) == 2:
+        state['Num 2'] = state['Num 2'] - 1
+    
+    return max_key,max_item
+
+# returns a tuple key representing the next node to assign
+# and a 1d list of all the values it can take.
+# this will return the node with the most least vaild values left
+# ties are resolved with heuristic 2 ( heuristic 3)
+def get_next_u_h3(state):
+   
+    curr = list(state['U'].keys())[0]
+    for x in state['U']:
+        diff = len(state['U'][x]) - len(state['U'][curr])
+        if diff == 0:
+            if state['Adj'][x] > state['Adj'][curr]:
+                curr = x
+        elif diff < 0:
+            curr = x
+    
+    item = state['U'].pop(curr)
+    if len(item) == 2:
+        state['Num 2'] = state['Num 2'] - 1
+
+    return curr,item
+
+def get_next_u_h4(state):
+    #if there is one node with one option, return it
+    for x in state['U']:
+        if len(state['U'][x]) == 2:
+            state['Num 2'] = state['Num 2'] - 1
+            return x,state['U'].pop(x)
+
+    # else just get one from the top
+    return state['U'].popitem()
+def keywithmaxval(d):
+     """ a) create a list of the dict's keys and values;
+         b) return the key with the max value"""
+     v=list(d.values())
+     k=list(d.keys())
+     return k[v.index(max(v))]
 
 
 def parse_puzzle(puzzle):
@@ -35,14 +98,12 @@ def parse_puzzle(puzzle):
     U = {}
     lc = {}
     wc = {}
-
-    adj = []
     Nodes= 0
     W = len(puzzle[0])
     H = len(puzzle)
     Solved = False
     Valid = True
-    
+    adj = getConstrains(puzzle)
     #If wall, add to A
 
     for i in range(H):
@@ -118,7 +179,6 @@ def parse_puzzle(puzzle):
     # If not wall, add to U
     for i in range(H):
         for j in range(W):
-
             if (i,j) not in A:
                 U[(i,j)] = ['b','_']
 
@@ -168,14 +228,15 @@ def parse_puzzle(puzzle):
     
     state = {'A':A,
             'U':U,
-            'Adjacency':adj,
+            'Adj':adj,
             'LC':lc,
             'WC':wc,
             'Nodes': Nodes,
             'W':W,
             'H':H,
             'Solved': Solved,
-            'Valid':Valid}
+            'Valid':Valid,
+            'Num 2': len(U)}
        
 
     return state
@@ -330,12 +391,16 @@ def effect_node(state,key):
                         updated = True
                         if len(state['U'][u]) == 0:
                             state['Valid'] = False
+                        else:
+                            state['Num 2'] = state['Num 2'] - 1
                 else:
                     if not check_constraints(state, u, val):
                         state['U'][u].remove(val)
                         updated = True
                         if len(state['U'][u]) == 0:
                             state['Valid'] = False
+                        else:
+                            state['Num 2'] = state['Num 2'] - 1
             if updated:
                 effect_node(state, u)
 
@@ -356,6 +421,6 @@ def update_state_backtracking(state, key, value):
 
     light_constraint_update(state,key,value)
     wall_constraint_update(state,key,value)
-    
+
     state['Max_depth'] = check_max_depth(state)
 
