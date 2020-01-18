@@ -11,23 +11,25 @@ def update_state_arc_consistent(state,key,value):
     effect_node(state,key)
     state['Adj'].pop(key)
     
+    one_option = {}
+    for u in state['U']:
+        if len(state['U'][u]) == 1:
+            one_option[u] = state['U'][u][0]
+
+    for u,i in one_option.items():
+        state['U'].pop(u)
+        state['A'][u] = i
+        light_constraint_update(state,u,i)
+        wall_constraint_update(state,u,i)
+        state['Adj'].pop(u)
+
     state['Solved'] = check_max_depth(state)
-    if state['Num 2'] == 0 and state['Valid']:
-        assign_all(state)
-        state['Solved'] = True
 
-def assign_all(state):
-    for x in state['U']:
-        state['A'][x] = state['U'][x][0]
-
-    state['U'] = {}
 
 # returns a tuple key representing the next node to assign
 # and a 1d list of all the values it can take. (No heuristic)
 def get_next_u(state):
     key,item = state['U'].popitem()
-    if len(item) == 2:
-        state['Num 2'] = state['Num 2'] - 1
     return key,item
 
 # returns a tuple key representing the next node to assign
@@ -39,7 +41,6 @@ def get_next_u_h1(state):
         if len(state['U'][x]) == 1:
             return x,state['U'].pop(x)
 
-    state['Num 2'] = state['Num 2'] - 1
     # else just get one from the top
     return state['U'].popitem()
 
@@ -50,8 +51,6 @@ def get_next_u_h1(state):
 def get_next_u_h2(state):
     max_key = keywithmaxval(state['Adj'])
     max_item = state['U'].pop(max_key)
-    if len(max_item) == 2:
-        state['Num 2'] = state['Num 2'] - 1
     
     return max_key,max_item
 
@@ -71,8 +70,6 @@ def get_next_u_h3(state):
             curr = x
     
     item = state['U'].pop(curr)
-    if len(item) == 2:
-        state['Num 2'] = state['Num 2'] - 1
 
     return curr,item
 
@@ -80,7 +77,6 @@ def get_next_u_h4(state):
     #if there is one node with one option, return it
     for x in state['U']:
         if len(state['U'][x]) == 2:
-            state['Num 2'] = state['Num 2'] - 1
             return x,state['U'].pop(x)
 
     # else just get one from the top
@@ -235,8 +231,7 @@ def parse_puzzle(puzzle):
             'W':W,
             'H':H,
             'Solved': Solved,
-            'Valid':Valid,
-            'Num 2': len(U)}
+            'Valid':Valid}
        
 
     return state
@@ -391,16 +386,12 @@ def effect_node(state,key):
                         updated = True
                         if len(state['U'][u]) == 0:
                             state['Valid'] = False
-                        else:
-                            state['Num 2'] = state['Num 2'] - 1
                 else:
                     if not check_constraints(state, u, val):
                         state['U'][u].remove(val)
                         updated = True
                         if len(state['U'][u]) == 0:
                             state['Valid'] = False
-                        else:
-                            state['Num 2'] = state['Num 2'] - 1
             if updated:
                 effect_node(state, u)
 
