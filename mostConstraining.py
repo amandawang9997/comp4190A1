@@ -85,7 +85,7 @@ def numlitCells(state, coord):
     while i - k >= 0 and (not isinstance(state[i - k][j], int)):
         result.append((i - k, j))
         k += 1
-    return len(result)
+    return len(set(result)) - 1
 
 
 # state is the initial state immediately after reading from stdin
