@@ -3,7 +3,6 @@ import rule
 from read import printPuzzle,read
 
 
-
 #the main loop so that it will always ask an input then solve the puzzle
 def mainLoop():
     
@@ -21,7 +20,6 @@ def backtracking(state): #state is the initial state immediately after reading f
     U=rule.getUnassigned(state) #a list of all unassigned variables
     A = {} #a dictionary that maps: unassigned coordinate-->None
     return backtrackingHelper(A,U.copy(),state)
-
 
 
 
