@@ -1,0 +1,53 @@
+tested with 6*6:  first test
+
+normal forward checking solved the puzzle in 0.025150564000000486 s. 3 nodes were visited
+
+forward checking with heuristic 1 solved the puzzle in 0.023894102999999944 s. 3 nodes were visited
+
+forward checking with heuristic 2 solved the puzzle in 0.011499405999998658 s. 2 nodes were visited
+
+forward checking with heuristic 3 solved the puzzle in 0.013067661000000896 s. 2 nodes were visited
+
+normal backtracking solved the puzzle in 0.11069217300000034 s. 40 nodes were visited
+
+backtracking with heuristic 1 solved the puzzle in 0.1029967359999997 s. 40 nodes were visited
+
+backtracking with heuristic 2 solved the puzzle in 0.13076543200000046 s. 47 nodes were visited
+
+backtracking with heuristic 3 solved the puzzle in 0.12422619099999999 s. 47 nodes were visited
+
+tested with 6*6 2nd test:
+
+normal forward checking solved the puzzle in 0.014656376000000026 s. 3 nodes were visited
+
+forward checking with heuristic 1 solved the puzzle in 0.014114679999999824 s. 3 nodes were visited
+
+forward checking with heuristic 2 solved the puzzle in 0.008321841000000108 s. 3 nodes were visited
+
+forward checking with heuristic 3 solved the puzzle in 0.006408594999999906 s. 3 nodes were visited
+
+normal backtracking solved the puzzle in 0.023024657000000115 s. 20 nodes were visited
+
+backtracking with heuristic 1 solved the puzzle in 0.023658884000000047 s. 20 nodes were visited
+
+backtracking with heuristic 2 solved the puzzle in 0.03117410300000012 s. 25 nodes were visited
+
+backtracking with heuristic 3 solved the puzzle in 0.03247467299999984 s. 25 nodes were visited
+
+test with 6*6 3rd test:
+
+normal forward checking solved the puzzle in 0.007716626000000115 s. 2 nodes were visited
+
+forward checking with heuristic 1 solved the puzzle in 0.005855845999999998 s. 2 nodes were visited
+
+forward checking with heuristic 2 solved the puzzle in 0.006064590000000036 s. 2 nodes were visited
+
+forward checking with heuristic 3 solved the puzzle in 0.0035562799999999672 s. 2 nodes were visited
+
+normal backtracking solved the puzzle in 0.02612460900000002 s. 22 nodes were visited
+
+backtracking with heuristic 1 solved the puzzle in 0.02617776900000024 s. 22 nodes were visited
+
+backtracking with heuristic 2 solved the puzzle in 0.032646304000000015 s. 25 nodes were visited
+
+backtracking with heuristic 3 solved the puzzle in 0.0313298070000001 s. 25 nodes were visited
