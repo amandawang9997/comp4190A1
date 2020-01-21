@@ -1,6 +1,6 @@
 import rule
 from read import printPuzzle, read
-from backtracking import assignAll
+from backtracking1 import assignAll
 import copy
 import random
 
