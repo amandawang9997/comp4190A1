@@ -3,7 +3,9 @@ import rule
 from read import printPuzzle, read
 
 
+
 # the main loop so that it will always ask an input then solve the puzzle
+
 def mainLoop():
 
     while True:
@@ -22,9 +24,10 @@ def backtracking(state):  # state is the initial state immediately after reading
     return backtrackingHelper(A, U.copy(), state)
 
 
-# this method receives assignments(A,dictionary), a list of unassigned coordinates(U), an initial state
-# it returns a new assignment to solve the puzzle with initial state "state"
-def backtrackingHelper(A, U, state):
+#this method receives assignments(A,dictionary), a list of unassigned coordinates(U), an initial state
+#it returns a new assignment to solve the puzzle with initial state "state"
+def backtrackingHelper(A,U,state):
+
     current = assignAll(A, state)
     printPuzzle(current)
     if rule.solutionCheck(current):  # all unassigned cell have been assigned
