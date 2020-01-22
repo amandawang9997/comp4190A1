@@ -43,6 +43,7 @@ def investigate():
         solution, list1[i]['numVisited'] = list1[i]['function'](puzzle)
         list1[i]['time'] = timeit.default_timer() - t_initial
         print('{} solves the puzzle'.format(list1[i]['name']))
+        print('{} nodes visited'.format(list1[i]['numVisited']))
         print('the answer is:')
         printPuzzle(solution)
     for dict1 in list1:

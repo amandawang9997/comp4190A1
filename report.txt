@@ -1,4 +1,4 @@
-t0: arc consistency without heuristic
+f0: arc consistency without heuristic
 
 f1: arc consistency with most-constrined heuristic
 
