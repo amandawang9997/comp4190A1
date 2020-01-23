@@ -1,10 +1,17 @@
 import rule
 from read import printPuzzle, read
-from backtracking import assignAll
 import copy
 import random
 
 # the main loop so that it will always ask an input then solve the puzzle
+
+
+# this method receives an initial state and apply assignment A to it then return its copy
+def assignAll(A, state):
+    result = state.copy()
+    for (i, j), option in A.items():
+        result[i][j] = option
+    return result
 
 
 def mainLoopmC():

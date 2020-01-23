@@ -1,18 +1,18 @@
 # use normal forward checking
 from forward_checking import arc_consistent as ah0
 # use forward checking with heuristic 1
-from heuristic_1 import arc_consistent as ah1
+from forward_checking_h1 import arc_consistent as ah1
 # use forward checking with heuristic 2
-from heuristic_2 import arc_consistent as ah2
+from forward_checking_h2 import arc_consistent as ah2
 # use forward checking with heuristic 3
-from heuristic_3 import arc_consistent as ah3
-from backtracking_base import backtracking as bh0  # use normal backtracking
+from forward_checking_h3 import arc_consistent as ah3
+from backtrack import backtracking as bh0  # use normal backtracking
 # use backtracking with heuristic 1
-from backtracking_h1 import backtracking as bh1
+from backtrack_h1 import backtracking as bh1
 # use backtracking with heuristic 2
-from backtracking_h2 import backtracking as bh2
+from backtrack_h2 import backtracking as bh2
 # use backtracking with heuristic 3
-from backtracking_h3 import backtracking as bh3
+from backtrack_h3 import backtracking as bh3
 from read import read, printPuzzle
 import timeit
 

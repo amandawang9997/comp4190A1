@@ -1,4 +1,4 @@
-t0: arc consistency without heuristic
+f0: arc consistency without heuristic
 
 f1: arc consistency with most-constrined heuristic
 
@@ -33,10 +33,10 @@ The following table shows average nodes visited when the number of walls is chan
 48          2       2       3       3       99      99      2452    2452
 
 
-During the experiment, we observed that in general, the arc consistency algorithm performs
+During the experiment, we observed that, in general, the arc consistency algorithm performs
 significantly better than the backtracking algorithm. It is also quite surprising that the
 number of nodes visited remains almost the same when the arc consistency algorithm is used.
 On the contrary, the number increases exponentially when the backtracking algorithm is used.
 Additionally, the most constrained heuristic is the most efficient one. When puzzle's dimen
 -sion is fixed, if we have more walls (constraints), then the number of nodes visited will be
-reduced. Averagely, the arc consistency algorithm visits 2059% less nodes.
+reduced. On average, the arc consistency algorithm visits 2059% less nodes.
