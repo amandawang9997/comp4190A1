@@ -52,3 +52,6 @@ def investigate():
         num = dict1['numVisited']
         print('{} solved the puzzle in {} s. {} nodes were visited'.format(
             name, time, num))
+
+if __name__ == '__main__':
+    investigate()

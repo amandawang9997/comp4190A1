@@ -20,6 +20,9 @@ _13_10
 1___00
 #End
 
+Running investigation.py will run all the algorithms on a given puzzle and
+print statistics about them.
+
 Features.
 
 - We made the observation that, if you represent your constraints correctly, solutions, and only
